@@ -17,16 +17,30 @@ public class FileChannelCase {
 	public static void main(String[] args) throws IOException {
 //		fileChannelReadTest();
 		fileChannelWriteTest();
+//		transfer();
+	}
+
+	private static void transfer() throws IOException {
+		RandomAccessFile randomAccessFile = new RandomAccessFile("D:\\SreamTxt.txt", "rw");
+		FileChannel fileChannel = randomAccessFile.getChannel();
+
+		RandomAccessFile randomAccessFile1 = new RandomAccessFile("D:\\channelTest.txt", "rw");
+		FileChannel fileChannel1 = randomAccessFile1.getChannel();
+
+		int count = (int) fileChannel.size();
+		fileChannel1.transferFrom(fileChannel, 0, count);
 	}
 
 	private static void fileChannelWriteTest() throws IOException {
 		RandomAccessFile randomAccessFile = new RandomAccessFile("D:\\channelTest.txt", "rw");
 		FileChannel fileChannel = randomAccessFile.getChannel();
-		ByteBuffer buffer = ByteBuffer.allocate(20);
+		ByteBuffer buffer = ByteBuffer.allocate(128);
 		String txt = "this is a test txt";
 		buffer.put(txt.getBytes());
-		int count = fileChannel.write(buffer);
-		System.out.println(count);
+		buffer.flip();
+		while (buffer.hasRemaining()){
+			fileChannel.write(buffer);
+		}
 		randomAccessFile.close();
 	}
 
